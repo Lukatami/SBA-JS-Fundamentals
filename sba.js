@@ -74,12 +74,15 @@ const LearnerSubmissions = [
       score: 140,
     },
   },
-  
 ];
 
 function getLearnerData(course, ag, submissions) {
   // here, we would process this data to achieve the desired result.
+  // let asPassDueDate = [];
+  // for (let i = 0; i < AssignmentGroup.assignments.length; i++) {
+  //   if (AssignmentGroup.assignments.due_at <= Date.now())
 
+  // }
   //
 
   const result = [
@@ -105,19 +108,29 @@ const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
 console.log(result);
 
 function uniqueLerners() {
-
   let arrOfAllSubmissions = [];
-
   for (let i = 0; i < LearnerSubmissions.length; i++) {
     arrOfAllSubmissions.push(LearnerSubmissions[i].learner_id);
   }
-
   const uniqueLerners = arrOfAllSubmissions.filter((value, index, self) => {
     return self.indexOf(value) === index;
   });
-  console.log(uniqueLerners)
 }
 
-uniqueLerners();
+function getCurrentDate() {
+  let today = new Date().toISOString().slice(0, 10);
+  return today;
+}
 
+function getActualAssignments() {
+  let arr = [];
+  for (let i = 0; i < AssignmentGroup.assignments.length; i++) {
+    if (new Date(AssignmentGroup.assignments[i].due_at) < new Date()) {
+      arr.push(AssignmentGroup.assignments[i].id);
+      console.log(arr);
+    }
+  }
+  return arr;
+}
 
+getActualAssignments();

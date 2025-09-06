@@ -107,7 +107,7 @@ const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
 
 console.log(result);
 
-function uniqueLerners() {
+function getUniqueLerners() {
   let arrOfAllSubmissions = [];
   for (let i = 0; i < LearnerSubmissions.length; i++) {
     arrOfAllSubmissions.push(LearnerSubmissions[i].learner_id);
@@ -115,6 +115,7 @@ function uniqueLerners() {
   const uniqueLerners = arrOfAllSubmissions.filter((value, index, self) => {
     return self.indexOf(value) === index;
   });
+  return uniqueLerners;
 }
 
 function getCurrentDate() {
@@ -127,10 +128,37 @@ function getActualAssignments() {
   for (let i = 0; i < AssignmentGroup.assignments.length; i++) {
     if (new Date(AssignmentGroup.assignments[i].due_at) < new Date()) {
       arr.push(AssignmentGroup.assignments[i].id);
-      console.log(arr);
     }
   }
   return arr;
 }
 
-getActualAssignments();
+function getLearnersGrades() {
+  let assignments = getActualAssignments();
+  let learners = getUniqueLerners();
+  let allLearnersScore = [];
+
+  for (let i = 0; i < learners.length; i++) {
+    let learnerId = learners[i];
+    let learnerScore = [];
+
+    for (let j = 0; j < LearnerSubmissions.length; j++) {
+      let submission = LearnerSubmissions[j];
+
+      if (
+        submission.learner_id === learnerId &&
+        assignments.includes(submission.assignment_id)
+      ) {
+        learnerScore.push(submission.submission.score);
+      }
+    }
+    allLearnersScore.push({
+      learner_id: learnerId,
+      scores: learnerScore,
+    });
+  }
+  return allLearnersScore;
+}
+
+console.log(getLearnersGrades())
+

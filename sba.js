@@ -127,20 +127,24 @@ function getActualAssignments() {
   let arr = [];
   for (let i = 0; i < AssignmentGroup.assignments.length; i++) {
     if (new Date(AssignmentGroup.assignments[i].due_at) < new Date()) {
-      arr.push(AssignmentGroup.assignments[i].id);
+      arr.push({
+        id: AssignmentGroup.assignments[i].id,
+        due_at: AssignmentGroup.assignments[i].due_at,
+        points_possible: AssignmentGroup.assignments[i].points_possible,
+      });
     }
   }
   return arr;
 }
 
-function getLearnersGrades() {
-  let assignments = getActualAssignments();
+function getLearnersScore() {
+  let assignments = getActualAssignments().map(a => a.id);
   let learners = getUniqueLerners();
   let allLearnersScore = [];
 
   for (let i = 0; i < learners.length; i++) {
     let learnerId = learners[i];
-    let learnerScore = [];
+    let learnerScore = {};
 
     for (let j = 0; j < LearnerSubmissions.length; j++) {
       let submission = LearnerSubmissions[j];
@@ -149,7 +153,7 @@ function getLearnersGrades() {
         submission.learner_id === learnerId &&
         assignments.includes(submission.assignment_id)
       ) {
-        learnerScore.push(submission.submission.score);
+        learnerScore[submission.assignment_id] = submission.submission.score;
       }
     }
     allLearnersScore.push({
@@ -160,5 +164,14 @@ function getLearnersGrades() {
   return allLearnersScore;
 }
 
-console.log(getLearnersGrades())
+function getLearnerAssignmentGrade() {
+  let assignment = getActualAssignments();
+  let lernerScore = getLearnersScore();
 
+  for (let i = 0; i < lernerScore.length; i++) {
+    let assignmentGrade = 0;
+  }
+}
+
+console.log(getLearnersScore());
+console.log(getActualAssignments());

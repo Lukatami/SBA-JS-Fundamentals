@@ -78,11 +78,7 @@ const LearnerSubmissions = [
 
 function getLearnerData(course, ag, submissions) {
   // here, we would process this data to achieve the desired result.
-  // let asPassDueDate = [];
-  // for (let i = 0; i < AssignmentGroup.assignments.length; i++) {
-  //   if (AssignmentGroup.assignments.due_at <= Date.now())
 
-  // }
   //
 
   const result = [
@@ -118,11 +114,6 @@ function getUniqueLerners() {
   return uniqueLerners;
 }
 
-function getCurrentDate() {
-  let today = new Date().toISOString().slice(0, 10);
-  return today;
-}
-
 function getActualAssignments() {
   let arr = [];
   for (let i = 0; i < AssignmentGroup.assignments.length; i++) {
@@ -138,7 +129,7 @@ function getActualAssignments() {
 }
 
 function getLearnersScore() {
-  let assignments = getActualAssignments().map(a => a.id);
+  let assignments = getActualAssignments().map((a) => a.id);
   let learners = getUniqueLerners();
   let allLearnersScore = [];
 
@@ -153,7 +144,10 @@ function getLearnersScore() {
         submission.learner_id === learnerId &&
         assignments.includes(submission.assignment_id)
       ) {
-        learnerScore[submission.assignment_id] = submission.submission.score;
+        learnerScore[submission.assignment_id] = {
+          score: submission.submission.score,
+          submitted_at: submission.submission.submitted_at,
+        };
       }
     }
     allLearnersScore.push({
@@ -164,14 +158,74 @@ function getLearnersScore() {
   return allLearnersScore;
 }
 
-function getLearnerAssignmentGrade() {
-  let assignment = getActualAssignments();
-  let lernerScore = getLearnersScore();
+function getLearnersScore() {
+  let assignments = getActualAssignments().map((a) => a.id);
+  let learners = getUniqueLerners();
+  let allLearnersScore = [];
 
-  for (let i = 0; i < lernerScore.length; i++) {
-    let assignmentGrade = 0;
+  for (let i = 0; i < learners.length; i++) {
+    let learnerId = learners[i];
+    let learnerScore = {};
+
+    for (let j = 0; j < LearnerSubmissions.length; j++) {
+      let submission = LearnerSubmissions[j];
+
+      if (
+        submission.learner_id === learnerId &&
+        assignments.includes(submission.assignment_id)
+      ) {
+        learnerScore[submission.assignment_id] = {
+          score: submission.submission.score,
+          submitted_at: submission.submission.submitted_at,
+        };
+      }
+    }
+    allLearnersScore.push({
+      learner_id: learnerId,
+      scores: learnerScore,
+    });
   }
+  return allLearnersScore;
 }
 
-console.log(getLearnersScore());
-console.log(getActualAssignments());
+// console.log(getLearnersScore());
+// console.log(getActualAssignments());
+
+
+// console.log(AssignmentGroup.assignments[0].points_possible);
+// console.log(AssignmentGroup.assignments[0].due_at);
+
+// console.log(LearnerSubmissions[0].submission.score);
+// console.log(LearnerSubmissions[0].submission.submitted_at);
+
+// console.log(LearnerSubmissions[1].learner_id);
+// console.log(LearnerSubmissions[2].learner_id);
+// console.log(LearnerSubmissions[3].learner_id);
+// console.log(LearnerSubmissions[4].learner_id);
+
+
+// Перебираем массив объектов LearnerSubmissions
+// Выбираем learner_id
+// По learner_id проходим по массиву LearnerSubmissions
+// Если lerner_id == learner_id записываем assignment_id и score
+// Если new Date (submitted_at) больше new Date (assigments.due_at) меняем score 
+
+
+
+//  if (
+//     new Date(LearnerSubmissions[4].submission.submitted_at) <=
+//     new Date(AssignmentGroup.assignments[1].due_at)
+//   ) {
+//     pastDue = false;
+//     score =
+//       LearnerSubmissions[4].submission.score /
+//       AssignmentGroup.assignments[1].points_possible;
+//     console.log(score);
+//   } else {
+//     score =
+//       (LearnerSubmissions[4].submission.score -
+//         AssignmentGroup.assignments[1].points_possible * 0.1) /
+//       AssignmentGroup.assignments[1].points_possible;
+//     score = +score.toFixed(3);
+//     console.log(score);
+//   }

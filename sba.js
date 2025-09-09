@@ -111,7 +111,7 @@ function getUniqueLerners() {
   for (let i = 0; i < LearnerSubmissions.length; i++) {
     arrOfAllSubmissions.push(LearnerSubmissions[i].learner_id);
   }
-  const uniqueLerners = arrOfAllSubmissions.filter((value, index, self) => {
+  let uniqueLerners = arrOfAllSubmissions.filter((value, index, self) => {
     return self.indexOf(value) === index;
   });
   return uniqueLerners;

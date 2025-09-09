@@ -81,6 +81,7 @@ function getLearnerData(course, ag, submissions) {
     throw new Error("Assignment group is not related to the course");
   }
 
+  
   const result = learnerGrades();
 
   //

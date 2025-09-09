@@ -108,9 +108,11 @@ console.log(result);
 
 function getUniqueLerners() {
   let arrOfAllSubmissions = [];
+  // Grab all submissions and extract all learner_id
   for (let i = 0; i < LearnerSubmissions.length; i++) {
     arrOfAllSubmissions.push(LearnerSubmissions[i].learner_id);
   }
+  // Filter arr of learner_id to delete duplicates
   let uniqueLerners = arrOfAllSubmissions.filter((value, index, self) => {
     return self.indexOf(value) === index;
   });
@@ -119,6 +121,7 @@ function getUniqueLerners() {
 
 function getActualAssignments() {
   let actualAssignments = [];
+  // Extract all Assignments that have to be counted
   for (let i = 0; i < AssignmentGroup.assignments.length; i++) {
     if (new Date(AssignmentGroup.assignments[i].due_at) < new Date()) {
       actualAssignments.push({
@@ -132,27 +135,33 @@ function getActualAssignments() {
 }
 
 function getLearnersScore() {
+  // Get arr of id from objects extracted from Actual assignments
   let assignments = getActualAssignments().map((a) => a.id);
   let learners = getUniqueLerners();
   let allLearnersScore = [];
 
+  // Get learners scores from submissions
   for (let i = 0; i < learners.length; i++) {
+    // Checking every unique learner with a loop
     let learnerId = learners[i];
     let learnerScore = {};
 
+    // Checking every submission for matching learner_id and assigment_id with submissionData
     for (let j = 0; j < LearnerSubmissions.length; j++) {
       let submission = LearnerSubmissions[j];
-
+      // Compare learner_ids and assignment_ids
       if (
         submission.learner_id === learnerId &&
         assignments.includes(submission.assignment_id)
       ) {
+        // Every matching adding to submissions array of objects
         learnerScore[submission.assignment_id] = {
           score: submission.submission.score,
           submitted_at: submission.submission.submitted_at,
         };
       }
     }
+    // Add every learner Data to array
     allLearnersScore.push({
       learner_id: learnerId,
       scores: learnerScore,
@@ -162,23 +171,33 @@ function getLearnersScore() {
 }
 
 function learnerGrades() {
+  // Get the information included all required data
   let submissionData = getLearnersScore();
   let assignmentData = getActualAssignments();
+
+  // Following of required output as an array of objects
   let finalResults = [];
 
+  // Loop for every learner data
   for (let i = 0; i < submissionData.length; i++) {
+    // Declare storage variable for learner results
     let learnerResult = {
       id: submissionData[i].learner_id,
       avg: 0,
     };
 
+    // Declare storage variables for scores
     let totalScore = 0;
     let totalPossible = 0;
 
+    // Loop for every actual assignment
     for (let j = 0; j < assignmentData.length; j++) {
+
+      // Declare actual assignment variable for looping
       let assignmentScore = assignmentData[j].points_possible;
       let assignmentID = assignmentData[j].id;
 
+      // 
       if (submissionData[i].scores[assignmentID]) {
         studentData = submissionData[i].scores[assignmentID];
 
